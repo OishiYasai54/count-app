@@ -23,6 +23,8 @@ services:
       context: ./app1
       args:
         VITE_ACCESS_TOKEN: ${VITE_ACCESS_TOKEN}
+    env_file:
+      - ./app1/.env
     container_name: countup
     expose:
       - "3000"

@@ -20,8 +20,6 @@ npm run dev
 # Vite (localhost:5173) + PHP サーバー (localhost:8000) が同時起動
 ```
 
-`http://localhost:5173/?token=your-token` でアクセスできます。
-
 ## ディレクトリ構成
 
 ```
@@ -49,7 +47,8 @@ npm run dev
 cd ~/services && git clone <repo-url> app1
 
 # 環境変数を設定
-echo "VITE_ACCESS_TOKEN=your-token-here" >> ~/services/.env
+cp ~/services/app1/.env.example ~/services/app1/.env
+# ~/services/app1/.env を編集して VITE_ACCESS_TOKEN を設定
 
 # Nginx vhost を配置
 cp ~/services/app1/infra/nginx.conf ~/nginx/conf.d/app1.conf
