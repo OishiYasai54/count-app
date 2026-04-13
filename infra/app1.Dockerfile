@@ -1,9 +1,9 @@
 # Stage 1: Vue アプリをビルド
 FROM node:22-alpine AS builder
 WORKDIR /app
-COPY repo/package*.json ./
+COPY repo/countup/package*.json ./
 RUN npm ci
-COPY repo/ .
+COPY repo/countup/ .
 ARG VITE_ACCESS_TOKEN
 ENV VITE_ACCESS_TOKEN=$VITE_ACCESS_TOKEN
 RUN npm run build
@@ -16,9 +16,9 @@ RUN apk add --no-cache php83-fpm supervisor \
     && chown nobody:nobody /var/www/data
 
 COPY --from=builder /app/dist /var/www/html
-COPY repo/public/api/count.php /var/www/api/count.php
-COPY repo/docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY repo/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY repo/countup/public/api/count.php /var/www/api/count.php
+COPY repo/countup/docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY repo/countup/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 3000
 

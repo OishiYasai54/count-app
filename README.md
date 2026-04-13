@@ -55,17 +55,17 @@ npm run dev
 
 ```bash
 # ディレクトリを作成してリポジトリを配置
-mkdir -p ~/services/app1
-cd ~/services/app1 && git clone <repo-url> repo
+mkdir -p ~/services/app1/repo
+cd ~/services/app1/repo && git clone <repo-url> countup
 
 # Dockerfile を配置（infra/app1.Dockerfile を参照）
-cp ~/services/app1/repo/infra/app1.Dockerfile ~/services/app1/Dockerfile
+cp ~/services/app1/repo/countup/infra/app1.Dockerfile ~/services/app1/Dockerfile
 
 # 環境変数を設定（~/services/.env に追記）
 echo "VITE_ACCESS_TOKEN=your-token-here" >> ~/services/.env
 
 # Nginx vhost を配置
-cp ~/services/app1/repo/infra/nginx.conf ~/nginx/conf.d/app1.conf
+cp ~/services/app1/repo/countup/infra/nginx.conf ~/nginx/conf.d/app1.conf
 
 # メイン compose にサービスを追記
 # infra/compose-fragment.yml を参考に ~/services/docker-compose.yml に追記
@@ -77,6 +77,6 @@ cd ~/services && docker compose up -d
 ### 更新
 
 ```bash
-cd ~/services/app1/repo && git pull
+cd ~/services/app1/repo/countup && git pull
 cd ~/services && docker compose build countup --no-cache && docker compose up -d
 ```
