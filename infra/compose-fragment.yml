@@ -1,10 +1,24 @@
-# ~/services/docker-compose.yml に追記するスニペット
-#
-# services: の中に以下を追加する
-# volumes:  の中に counter_data: を追加する
-# nginx サービスの depends_on に countup を追加する
+# ~/services/docker-compose.yml の完成形サンプル
+# 既存の services / volumes に以下をマージする
 
 services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../nginx/conf.d:/etc/nginx/conf.d:ro
+      - ../nginx/ssl:/etc/nginx/ssl:ro
+      - ../nginx/html:/usr/share/nginx/html:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - countup
+    networks:
+      - app-network
+    restart: always
+
   countup:
     build:
       context: ./app1
@@ -35,3 +49,7 @@ services:
 
 volumes:
   counter_data:
+
+networks:
+  app-network:
+    external: true
