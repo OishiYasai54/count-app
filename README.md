@@ -7,7 +7,7 @@ Vue 3 + TypeScript + Vite で構築されたシンプルなフィットネスカ
 
 - URL トークン認証（`?token=xxx`）でアクセス制御
 - PHP-FPM によるカウントの永続化
-- Docker Compose によるワンコマンドデプロイ
+- nginx + PHP-FPM を1コンテナで運用（supervisord）
 
 ## ローカル開発
 
@@ -31,11 +31,12 @@ npm run dev
 ├── public/api/
 │   └── count.php           # カウント API
 ├── docker/
-│   ├── nginx/              # Vue ビルド + Nginx
-│   └── php/                # PHP-FPM
+│   ├── nginx.conf          # コンテナ内 Nginx 設定（port 3000）
+│   └── supervisord.conf    # nginx + PHP-FPM 同時起動
 ├── infra/
 │   ├── nginx.conf          # VPS ホスト Nginx vhost 設定
-│   └── compose-fragment.yml # メイン compose への追記スニペット
+│   └── compose-fragment.yml # メイン compose サンプル
+├── Dockerfile              # nginx + PHP-FPM の単一コンテナ
 └── .env.example
 ```
 
@@ -54,7 +55,7 @@ echo "VITE_ACCESS_TOKEN=your-token-here" >> ~/services/.env
 cp ~/services/app1/infra/nginx.conf ~/nginx/conf.d/app1.conf
 
 # メイン compose にサービスを追記
-# infra/compose-fragment.yml を ~/services/docker-compose.yml に追記
+# infra/compose-fragment.yml を参考に ~/services/docker-compose.yml に追記
 
 # 起動
 cd ~/services && docker compose up -d
@@ -64,5 +65,5 @@ cd ~/services && docker compose up -d
 
 ```bash
 cd ~/services/app1 && git pull
-cd ~/services && docker compose build countup countup-php --no-cache && docker compose up -d
+cd ~/services && docker compose build countup --no-cache && docker compose up -d
 ```
