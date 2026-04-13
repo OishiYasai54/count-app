@@ -15,6 +15,8 @@ RUN apk add --no-cache php83-fpm supervisor \
     && mkdir -p /var/www/api /var/www/data \
     && chown nobody:nobody /var/www/data
 
+ENV DATA_DIR=/var/www/data
+
 COPY --from=builder /app/dist /var/www/html
 COPY repo/count-app/public/api/count.php /var/www/api/count.php
 COPY repo/count-app/docker/nginx.conf /etc/nginx/conf.d/default.conf
