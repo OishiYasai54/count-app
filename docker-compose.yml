@@ -1,0 +1,33 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+      args:
+        VITE_ACCESS_TOKEN: ${VITE_ACCESS_TOKEN}
+    ports:
+      - "3001:80"   # ホスト Nginx がここにリバースプロキシする
+    depends_on:
+      - php
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    environment:
+      DATA_DIR: /var/www/data
+    volumes:
+      - counter_data:/var/www/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  counter_data:
+
+networks:
+  app-network:
+    external: true   # ~/services/ 共通ネットワーク（既存）
