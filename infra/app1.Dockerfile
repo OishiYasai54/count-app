@@ -13,9 +13,8 @@ FROM nginx:alpine
 
 RUN apk add --no-cache php83-fpm supervisor \
     && mkdir -p /var/www/api /var/www/data \
-    && chown nobody:nobody /var/www/data
-
-ENV DATA_DIR=/var/www/data
+    && chown nobody:nobody /var/www/data \
+    && echo "env[DATA_DIR] = /var/www/data" >> /etc/php83/php-fpm.d/www.conf
 
 COPY --from=builder /app/dist /var/www/html
 COPY repo/count-app/public/api/count.php /var/www/api/count.php
