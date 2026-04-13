@@ -5,37 +5,66 @@ Vue 3 + TypeScript + Vite で構築されたシンプルなカウンターアプ
 
 ## 特徴
 
-- **レスポンシブ対応**: 画面サイズに合わせてレイアウトが自動調整されます（スマホ・タブレット対応）。
-- **ログイン機能**: ユーザー名とパスワードによる簡易認証。
-- **セッション維持**: ローカルストレージを使用してログイン状態を保持します。
-- **コンポーネント設計**: 機能ごとにコンポーネントが分割され、保守性が高まっています。
+- URL トークン認証（`?token=xxx`）でアクセス制御
+- PHP-FPM によるカウントの永続化
+- Docker Compose によるワンコマンドデプロイ
 
-## 開発について
-
-このプロジェクトは **Google Gemini Code Assist** とのペアプログラミングによって開発されました。UIデザインの調整やリファクタリングにAIを活用しています。
-
-## セットアップ
-
-### 依存関係のインストール
+## ローカル開発
 
 ```bash
+cp .env.example .env
+# .env を編集して VITE_ACCESS_TOKEN を設定
+
 npm install
-```
-
-### 開発サーバーの起動
-
-```bash
 npm run dev
+# Vite (localhost:5173) + PHP サーバー (localhost:8000) が同時起動
 ```
 
-### ビルド
-
-```bash
-npm run build
-```
+`http://localhost:5173/?token=your-token` でアクセスできます。
 
 ## ディレクトリ構成
 
-- `src/components/`: UIコンポーネント (LoginView, CounterControls, etc.)
-- `src/composables/`: ロジック (useAuth, useCounter)
-- `src/App.vue`: アプリケーションのエントリーポイント
+```
+├── src/                    # Vue フロントエンド
+│   ├── components/
+│   └── composables/
+├── public/api/
+│   └── count.php           # カウント API
+├── docker/
+│   ├── nginx/              # Vue ビルド + Nginx
+│   └── php/                # PHP-FPM
+├── infra/
+│   ├── nginx.conf          # VPS ホスト Nginx vhost 設定
+│   └── compose-fragment.yml # メイン compose への追記スニペット
+├── docker-compose.yml      # ローカル開発用
+├── deploy.sh               # VPS デプロイスクリプト
+└── .env.example
+```
+
+## VPS デプロイ
+
+### 初回
+
+```bash
+# リポジトリを配置
+cd ~/services && git clone <repo-url> app1
+
+# 環境変数を設定
+echo "VITE_ACCESS_TOKEN=your-token-here" >> ~/services/.env
+
+# Nginx vhost を配置
+cp ~/services/app1/infra/nginx.conf ~/nginx/conf.d/app1.conf
+
+# メイン compose にサービスを追記
+# infra/compose-fragment.yml を ~/services/docker-compose.yml に追記
+
+# 起動
+cd ~/services && docker compose up -d
+```
+
+### 更新
+
+```bash
+cd ~/services/app1 && git pull
+cd ~/services && docker compose build countup countup-php --no-cache && docker compose up -d
+```
