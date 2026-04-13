@@ -2,6 +2,7 @@
 public/api/data.json
 tool-encrypt.php
 tool-encrypt.php.tmp
+.DS_Store
 
 # Logs
 logs
