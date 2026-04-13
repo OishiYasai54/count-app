@@ -36,8 +36,6 @@ npm run dev
 ├── infra/
 │   ├── nginx.conf          # VPS ホスト Nginx vhost 設定
 │   └── compose-fragment.yml # メイン compose への追記スニペット
-├── docker-compose.yml      # ローカル開発用
-├── deploy.sh               # VPS デプロイスクリプト
 └── .env.example
 ```
 
