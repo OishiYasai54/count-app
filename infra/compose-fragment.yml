@@ -27,7 +27,7 @@ services:
         VITE_ACCESS_TOKEN: ${VITE_ACCESS_TOKEN}
     container_name: countup
     expose:
-      - "80"
+      - "3000"
     depends_on:
       - countup-php
     networks:
