@@ -21,10 +21,9 @@ services:
   countup:
     build:
       context: ./app1
+      dockerfile: Dockerfile
       args:
         VITE_ACCESS_TOKEN: ${VITE_ACCESS_TOKEN}
-    env_file:
-      - ./app1/.env
     container_name: countup
     expose:
       - "3000"

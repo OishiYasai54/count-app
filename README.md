@@ -40,18 +40,32 @@ npm run dev
 
 ## VPS デプロイ
 
+### ディレクトリ構成（VPS）
+
+```
+~/services/
+├── docker-compose.yml
+├── app1/
+│   ├── Dockerfile        # ビルド用（repo/ を参照）
+│   ├── .env              # VITE_ACCESS_TOKEN を記載
+│   └── repo/             # git clone した実体
+```
+
 ### 初回
 
 ```bash
-# リポジトリを配置
-cd ~/services && git clone <repo-url> app1
+# ディレクトリを作成してリポジトリを配置
+mkdir -p ~/services/app1
+cd ~/services/app1 && git clone <repo-url> repo
 
-# 環境変数を設定
-cp ~/services/app1/.env.example ~/services/app1/.env
-# ~/services/app1/.env を編集して VITE_ACCESS_TOKEN を設定
+# Dockerfile を配置（infra/app1.Dockerfile を参照）
+cp ~/services/app1/repo/infra/app1.Dockerfile ~/services/app1/Dockerfile
+
+# 環境変数を設定（~/services/.env に追記）
+echo "VITE_ACCESS_TOKEN=your-token-here" >> ~/services/.env
 
 # Nginx vhost を配置
-cp ~/services/app1/infra/nginx.conf ~/nginx/conf.d/app1.conf
+cp ~/services/app1/repo/infra/nginx.conf ~/nginx/conf.d/app1.conf
 
 # メイン compose にサービスを追記
 # infra/compose-fragment.yml を参考に ~/services/docker-compose.yml に追記
@@ -63,6 +77,6 @@ cd ~/services && docker compose up -d
 ### 更新
 
 ```bash
-cd ~/services/app1 && git pull
+cd ~/services/app1/repo && git pull
 cd ~/services && docker compose build countup --no-cache && docker compose up -d
 ```
