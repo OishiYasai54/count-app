@@ -10,7 +10,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # PHP-FPM と supervisor をインストール
-RUN apk add --no-cache php83-fpm supervisor \
+RUN apk add --no-cache php83-fpm php83-session supervisor \
     && mkdir -p /var/www/api /var/www/data \
     && chown nobody:nobody /var/www/data \
     && echo "clear_env = no" >> /etc/php83/php-fpm.d/www.conf

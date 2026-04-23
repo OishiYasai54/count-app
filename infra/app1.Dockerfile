@@ -9,7 +9,7 @@ RUN npm run build
 # Stage 2: nginx + PHP-FPM を1コンテナで運用
 FROM nginx:alpine
 
-RUN apk add --no-cache php83-fpm supervisor \
+RUN apk add --no-cache php83-fpm php83-session supervisor \
     && mkdir -p /var/www/api /var/www/data \
     && chown nobody:nobody /var/www/data \
     && echo "env[DATA_DIR] = /var/www/data" >> /etc/php83/php-fpm.d/www.conf \
