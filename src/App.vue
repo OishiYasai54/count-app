@@ -10,15 +10,18 @@ const { count, initCounter, stopListening, increment, decrement, reset } = useCo
 
 const isAuthorized = ref(false);
 
-onMounted(() => {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('token');
-  const validToken = import.meta.env.VITE_ACCESS_TOKEN as string | undefined;
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/session.php');
+    if (!res.ok) return;
+    const data: { authorized: boolean } = await res.json();
+    if (!data.authorized) return;
 
-  if (!validToken || token !== validToken) return;
-
-  isAuthorized.value = true;
-  initCounter();
+    isAuthorized.value = true;
+    initCounter();
+  } catch {
+    // ネットワークエラーは未認証として扱う
+  }
 });
 
 onUnmounted(() => {

@@ -4,8 +4,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-ARG VITE_ACCESS_TOKEN
-ENV VITE_ACCESS_TOKEN=$VITE_ACCESS_TOKEN
 RUN npm run build
 
 # Stage 2: nginx + PHP-FPM を1コンテナで運用
@@ -14,13 +12,16 @@ FROM nginx:alpine
 # PHP-FPM と supervisor をインストール
 RUN apk add --no-cache php83-fpm supervisor \
     && mkdir -p /var/www/api /var/www/data \
-    && chown nobody:nobody /var/www/data
+    && chown nobody:nobody /var/www/data \
+    && echo "clear_env = no" >> /etc/php83/php-fpm.d/www.conf
 
 # Vue ビルド成果物
 COPY --from=builder /app/dist /var/www/html
 
 # PHP ファイル
-COPY public/api/count.php /var/www/api/count.php
+COPY public/api/count.php       /var/www/api/count.php
+COPY public/api/authenticate.php /var/www/api/authenticate.php
+COPY public/api/session.php      /var/www/api/session.php
 
 # nginx 設定
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf

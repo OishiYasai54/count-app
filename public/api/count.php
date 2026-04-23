@@ -1,10 +1,26 @@
 <?php
+declare(strict_types=1);
+
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'secure'   => true,
+    'httponly' => true,
+    'samesite' => 'Strict',
+]);
+session_start();
+
+if (empty($_SESSION['logged_in'])) {
+    http_response_code(401);
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
+
 header('Content-Type: application/json');
 
-// DATA_DIR 環境変数があればそちらを使う（Docker用）、なければスクリプトと同階層
 $dataFile = (getenv('DATA_DIR') ?: __DIR__) . '/data.json';
 
-// GET: 現在のカウントを返す
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (file_exists($dataFile)) {
         echo file_get_contents($dataFile);
@@ -14,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-// POST: カウントを更新する
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     $delta = $input['delta'] ?? 0;

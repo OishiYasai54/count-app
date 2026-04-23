@@ -22,9 +22,9 @@ services:
     build:
       context: ./app1
       dockerfile: Dockerfile
-      args:
-        VITE_ACCESS_TOKEN: ${VITE_ACCESS_TOKEN}
     container_name: countup
+    environment:
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
     expose:
       - "3000"
     volumes:
